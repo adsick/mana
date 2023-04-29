@@ -1,0 +1,14 @@
+[package]
+name = "mana"
+version = "0.1.0"
+authors = ["adsick <adsick@protonmail.com>"]
+edition = "2021"
+description = "Flexible input manager"
+license = "MIT OR Apache-2.0"
+
+
+[workspace]
+members = ["crates/*"]
+
+[dependencies]
+colored = "2.0"
