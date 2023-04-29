@@ -6,7 +6,7 @@ You may heard of QMK/VIA, Mana is different in that it is designed to power your
 
 ## what problems will it solve?
 
-* ergonomics - more actions are within reach due to home-row combos (FJ, JK, etc.), no need to move your fingers. It also enables you to use minimal keyboards (such without numpads, fn keys, and even arrows or numrows).
+* ergonomics - more actions are within reach thanks to home-row combos (FJ, JK, etc.), no need to move your fingers. It also enables you to use minimal keyboards (such without numpads, fn keys, and even arrows or numrows).
 * do more with less - with mana you can bind much more key combinations using time relations between input events
 * customizable controls - you can change the way you interact with your app by configuring it's mana profile.
 * no-nonsense - mana allows you to eliminate key repeat where it is not necessary. 
