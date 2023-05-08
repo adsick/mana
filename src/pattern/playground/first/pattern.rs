@@ -7,13 +7,13 @@ use crate::{
     pattern::playground::first::atom::AtomResult,
 };
 
-use crate::pattern::atom::{Atom, KeyboardAtom};
+use crate::pattern::atom::{Atom};
 
-use super::atom::KeyboardAtomCommand;
+use super::atom::KeyboardAtom;
 
 #[derive(Debug)]
-pub struct Pattern<T, S> {
-    graph: Graph<T>,
+pub struct Pattern<V, E, S> {
+    graph: Graph<V, E>,
     state: S,
 }
 
@@ -23,21 +23,23 @@ pub struct PatternState {
     pub time: u32, // there might be more different "times", like "root_time" for example (timestamp of the root activation)
 }
 
-impl Pattern<KeyboardAtomCommand, PatternState> {
-    pub fn new(root: KeyboardAtomCommand, time: u32) -> Self {
+type Command = u8;
+
+impl Pattern<Command, KeyboardAtom, PatternState> {
+    pub fn new(root: Command, time: u32) -> Self {
         Self {
             graph: Graph::new(root),
             state: PatternState { active: 0, time },
         }
     }
 
-    pub fn build(&mut self) -> GraphBuilder<'_, KeyboardAtomCommand> {
+    pub fn build(&mut self) -> GraphBuilder<'_, Command, KeyboardAtom> {
         self.graph.build()
     }
 
     // todo: consider proper enum for return type (it may contain info about the completeness of the pattern)
     /// call this method anytime you want to get new commands
-    pub fn apply(&mut self, input: &Event<KeyboardInput, u32>) -> Result<u8, PatternErr> {
+    pub fn apply(&mut self, input: &Event<KeyboardInput, u32>) -> Option<Command> {
         // this is the node id whose children we match with our `input`
         let mut current = self.state.active;
 
@@ -46,8 +48,8 @@ impl Pattern<KeyboardAtomCommand, PatternState> {
         queue.push_front(current);
 
         while let Some(current) = queue.pop_back() {
-            for (&id, node) in self.graph.get_children(current) {
-                let atom = node.value();
+            for (&id, atom, node) in self.graph.edges(current) {
+                let command = *node.value(); // what if the type is not copy?
 
                 let res = atom.handle(input, &self.state);
 
@@ -58,13 +60,13 @@ impl Pattern<KeyboardAtomCommand, PatternState> {
                         self.state.active = id; // set current active node to this accepted child
                         self.state.time = input.time;
 
-                        if self.graph.is_leaf_node(id) {
+                        if self.graph[id].leaf() {
                             // found a node without children
                             // perform a self reset
                             self.state.active = 0;
                         }
 
-                        return Ok(atom.command); // this will maybe replaced with a break
+                        return Some(command); // this will maybe replaced with a break
                     }
                     AtomResult::Rejected => continue,
                     AtomResult::Proceed => {
@@ -79,14 +81,6 @@ impl Pattern<KeyboardAtomCommand, PatternState> {
         self.state.active = 0;
 
         // kinda bad
-        Err(PatternErr::Dead)
+        None
     }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum PatternErr {
-    /// input not handled (unexpected input)
-    Dead,
-    /// input is incomplete
-    Incomplete,
 }

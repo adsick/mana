@@ -2,8 +2,9 @@ use std::{cell::RefCell, rc::Rc};
 
 use super::{Graph, Node, NodeId};
 
-pub struct GraphBuilder<'g, T> {
-    graph: Rc<RefCell<&'g mut Graph<T>>>,
+// this type is used for more ergonomic graph construction, but I doubt how good it is to use in prod
+pub struct GraphBuilder<'g, V, E> {
+    graph: Rc<RefCell<&'g mut Graph<V, E>>>,
     node: NodeId,
 }
 
@@ -15,8 +16,8 @@ pub struct GraphBuilder<'g, T> {
 //     }
 // }
 
-impl<'g, T> GraphBuilder<'g, T> {
-    pub fn new(graph: &'g mut Graph<T>, node: NodeId) -> Self {
+impl<'g, V, E> GraphBuilder<'g, V, E> {
+    pub fn new(graph: &'g mut Graph<V, E>, node: NodeId) -> Self {
         Self {
             graph: Rc::new(RefCell::new(graph)),
             node,
@@ -24,11 +25,11 @@ impl<'g, T> GraphBuilder<'g, T> {
     }
 
     /// add child to this node, can be chained
-    pub fn add(&self, node: T) -> Self {
+    pub fn add(&self, edge: E, value: V) -> Self {
         let id = self
             .graph
             .borrow_mut()
-            .add_to(self.node, Node::new(node))
+            .add_to(self.node, edge, Node::new(value))
             .unwrap();
 
         GraphBuilder {
@@ -41,27 +42,49 @@ impl<'g, T> GraphBuilder<'g, T> {
         self.node
     }
 
-    pub fn looping(&self) -> Self {
-        self.link_id(self.node);
-        GraphBuilder {
-            graph: self.graph.clone(),
-            node: self.id(),
-        }
+    pub fn looping(&self, edge: E) -> Self {
+        self.link_id(self.node, edge);
+        self.clone()
     }
 
-    pub fn link_id(&self, id: NodeId) -> Self {
-        self.graph.borrow_mut().link(self.node, id).unwrap();
-        GraphBuilder {
-            graph: self.graph.clone(),
-            node: self.id(),
-        }
+    pub fn link_id(&self, id: NodeId, edge: E) -> Self {
+        self.graph.borrow_mut().link(self.node, id, edge).unwrap();
+        self.clone()
     }
 
-    pub fn link(&self, node: &Self) -> Self {
-        self.graph.borrow_mut().link(self.node, node.id()).unwrap();
-        GraphBuilder {
+    pub fn link(&self, node: &Self, edge: E) -> Self {
+        self.graph
+            .borrow_mut()
+            .link(self.node, node.id(), edge)
+            .unwrap();
+        self.clone()
+    }
+}
+
+impl<'g, V, E> Clone for GraphBuilder<'g, V, E> {
+    fn clone(&self) -> Self {
+        Self {
             graph: self.graph.clone(),
-            node: self.id(),
+            node: self.node,
         }
     }
 }
+
+// todo: add api for getting specific edges?
+
+// pub struct EdgeBuilder<'n, V, E> {
+//     node: &'n mut Node<V, E>,
+// }
+
+// impl<'n, V, E> EdgeBuilder<'n, V, E> {
+//     pub fn new(node: &'n mut Node<V, E>) -> Self {
+//         Self { node }
+//     }
+//     pub fn val(self, value: E) {}
+// }
+
+// impl<'n, V, E> Drop for EdgeBuilder<'n, V, E>{
+//     fn drop(&mut self) {
+//         self.node
+//     }
+// }
