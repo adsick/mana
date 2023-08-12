@@ -80,7 +80,6 @@ impl Pattern<Command, KeyboardAtom, PatternState> {
         // reset on bad input
         self.state.active = 0;
 
-        // kinda bad
         None
     }
 }

@@ -98,7 +98,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn graph() {
+    fn graph_building() {
         let mut graph: Graph<char> = Graph::new('\0');
 
         let root = graph.build();
