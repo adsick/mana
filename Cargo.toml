@@ -7,8 +7,5 @@ description = "Flexible input manager"
 license = "MIT OR Apache-2.0"
 
 
-[workspace]
-members = ["crates/*"]
-
 [dependencies]
 colored = "2.0"

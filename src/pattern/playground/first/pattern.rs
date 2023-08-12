@@ -7,7 +7,7 @@ use crate::{
     pattern::playground::first::atom::AtomResult,
 };
 
-use crate::pattern::atom::{Atom};
+use crate::pattern::atom::Atom;
 
 use super::atom::KeyboardAtom;
 
