@@ -103,16 +103,17 @@ where
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for (i, node) in self.nodes.iter().enumerate() {
+            let value = node.value();
             let edges = node.edges();
             writeln!(f);
             if !edges.is_empty() {
-                writeln!(f, "{i} => {{");
+                writeln!(f, "{i} ({value:?}) => {{");
                 for ((edge, id)) in node.edges().iter() {
                     writeln!(f, "  {id}: {:?},", edge);
                 }
                 write!(f, "}}");
             } else {
-                write!(f, "{i},");
+                write!(f, "{i} ({value:?}),");
             }
         }
         Ok(())
