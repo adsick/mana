@@ -4,6 +4,7 @@ mod node;
 pub use builder::GraphBuilder;
 
 use std::ops::{Index, IndexMut};
+use std::fmt::Debug;
 
 pub use node::{Node, NodeId};
 
@@ -11,7 +12,7 @@ pub use node::{Node, NodeId};
 // the 0'th node is the root node (usually)
 
 // consider implementing 'relative' indexing for subgraphs
-#[derive(Debug, PartialEq)]
+#[derive(PartialEq)]
 pub struct Graph<V, E = ()> {
     nodes: Vec<Node<V, E>>,
 }
@@ -92,6 +93,29 @@ impl<V, E> Index<NodeId> for Graph<V, E> {
 impl<V, E> IndexMut<NodeId> for Graph<V, E> {
     fn index_mut(&mut self, index: NodeId) -> &mut Self::Output {
         &mut self.nodes[index]
+    }
+}
+
+impl<V, E> std::fmt::Debug for Graph<V, E>
+where
+    V: Debug,
+    E: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for (i, node) in self.nodes.iter().enumerate() {
+            let edges = node.edges();
+            writeln!(f);
+            if !edges.is_empty() {
+                writeln!(f, "{i} => {{");
+                for ((edge, id)) in node.edges().iter() {
+                    writeln!(f, "  {id}: {:?},", edge);
+                }
+                write!(f, "}}");
+            } else {
+                write!(f, "{i},");
+            }
+        }
+        Ok(())
     }
 }
 
