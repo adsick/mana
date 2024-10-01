@@ -1,20 +1,14 @@
-use std::{cell::RefCell, rc::Rc};
+use std::cell::{Ref, RefCell, RefMut};
+use std::rc::Rc;
 
 use super::{Graph, Node, NodeId};
 
 // this type is used for more ergonomic graph construction, but I doubt how good it is to use in prod
+// the idea is to keep a pointer to a certain node
 pub struct GraphBuilder<'g, V, E> {
     graph: Rc<RefCell<&'g mut Graph<V, E>>>,
     node: NodeId,
 }
-
-// impl<'g, T> Deref for GraphBuilder<'g, T>{
-//     type Target = T;
-
-//     fn deref(&self) -> &Self::Target {
-//         self.graph.borrow().nodes[self.node].value()
-//     }
-// }
 
 impl<'g, V, E> GraphBuilder<'g, V, E> {
     pub fn new(graph: &'g mut Graph<V, E>, node: NodeId) -> Self {
@@ -40,6 +34,42 @@ impl<'g, V, E> GraphBuilder<'g, V, E> {
 
     pub fn id(&self) -> NodeId {
         self.node
+    }
+
+    // ref to current node
+    pub fn node(&self) -> Ref<Node<V, E>> {
+        let gr = self.graph.borrow();
+        Ref::map(gr, |s| &s.nodes[self.node])
+    }
+
+    // mutable ref to current node
+    pub fn node_mut(&self) -> RefMut<Node<V, E>> {
+        let gr = self.graph.borrow_mut();
+        RefMut::map(gr, |g| &mut g[self.node])
+    }
+
+    // ref to current node's value
+    pub fn value(&self) -> Ref<V> {
+        let node = self.node();
+        Ref::map(node, |n| n.value())
+    }
+
+    // ref to current node's value
+    pub fn value_mut(&self) -> RefMut<V> {
+        let node = self.node_mut();
+        RefMut::map(node, |n| n.value_mut())
+    }
+
+    // ref to current node's edges
+    pub fn edges(&self) -> Ref<[(E, NodeId)]> {
+        let node = self.node();
+        Ref::map(node, |n| n.edges())
+    }
+
+    // ref to current node's value
+    pub fn edges_mut(&self) -> RefMut<[(E, NodeId)]> {
+        let node = self.node_mut();
+        RefMut::map(node, |n| n.edges_mut())
     }
 
     pub fn looping(&self, edge: E) -> Self {

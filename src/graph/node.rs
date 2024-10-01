@@ -6,8 +6,6 @@ pub type NodeId = usize;
 pub struct Node<V, E> {
     value: V,
 
-    // todo
-
     // decide what is 'next' and what is 'child'
     /// this nodes will be updated after this node completes
     /// "what to update next"
@@ -35,9 +33,12 @@ impl<V, E> Node<V, E> {
         &mut self.value
     }
 
-    // todo: ref?
-    pub fn edges(&self) -> Iter<(E, NodeId)> {
-        self.next.iter()
+    pub fn edges(&self) -> &[(E, NodeId)] {
+        &self.next
+    }
+
+    pub fn edges_mut(&mut self) -> &mut [(E, NodeId)] {
+        &mut self.next
     }
 
     // pub fn children(&self) -> Iter<NodeId> {

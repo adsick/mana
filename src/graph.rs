@@ -71,6 +71,7 @@ impl<V, E> Graph<V, E> {
     pub fn edges(&self, id: NodeId) -> impl Iterator<Item = (&NodeId, &E, &Node<V, E>)> {
         self.nodes[id]
             .edges()
+            .iter()
             .map(move |(e, id)| (id, e, &self.nodes[*id]))
     }
 
@@ -87,6 +88,7 @@ impl<V, E> Index<NodeId> for Graph<V, E> {
         &self.nodes[index]
     }
 }
+
 impl<V, E> IndexMut<NodeId> for Graph<V, E> {
     fn index_mut(&mut self, index: NodeId) -> &mut Self::Output {
         &mut self.nodes[index]
