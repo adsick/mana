@@ -73,20 +73,17 @@ impl<'g, V, E> GraphBuilder<'g, V, E> {
     }
 
     pub fn looping(&self, edge: E) -> Self {
-        self.link_id(self.node, edge);
+        self.link(&self, edge);
         self.clone()
     }
 
     pub fn link_id(&self, id: NodeId, edge: E) -> Self {
-        self.graph.borrow_mut().link(self.node, id, edge).unwrap();
+        self.node_mut().add_edge(id, edge);
         self.clone()
     }
 
     pub fn link(&self, node: &Self, edge: E) -> Self {
-        self.graph
-            .borrow_mut()
-            .link(self.node, node.id(), edge)
-            .unwrap();
+        self.node_mut().add_edge(node.id(), edge);
         self.clone()
     }
 }
