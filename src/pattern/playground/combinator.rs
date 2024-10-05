@@ -1,6 +1,5 @@
 use crate::pattern::atom::Atom;
 
-
 // the usefulness of this is doubtable
 // todo: naming
 #[derive(Debug)]
@@ -25,8 +24,8 @@ where
         match self {
             PatternCombinator::Pattern(p) => p.handle(input, state),
             PatternCombinator::Not(p) => !p.handle(input, state),
-            PatternCombinator::Any(ps) => ps.iter().map(|p| p.handle(input, state)).any(|p| p),
-            PatternCombinator::All(ps) => ps.iter().map(|p| p.handle(input, state)).all(|p| p),
+            PatternCombinator::Any(ps) => ps.iter().any(|p| p.handle(input, state)),
+            PatternCombinator::All(ps) => ps.iter().all(|p| p.handle(input, state)),
         }
     }
 }
