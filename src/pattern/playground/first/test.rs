@@ -1,9 +1,6 @@
 use crate::{
     input::Event,
-    pattern::playground::first::{
-        atom::KeyboardAtom,
-        pattern::Pattern,
-    },
+    pattern::playground::first::{atom::KeyboardAtom, pattern::Pattern},
 };
 use colored::*;
 

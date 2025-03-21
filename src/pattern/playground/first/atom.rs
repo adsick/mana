@@ -1,6 +1,6 @@
 use crate::{
     input::{Event, KeyboardInput},
-    pattern::{atom::Atom, self},
+    pattern::{self, atom::Atom},
 };
 
 use super::pattern::PatternState;

@@ -5,8 +5,8 @@ mod test;
 
 pub use builder::GraphBuilder;
 
-use std::ops::{Index, IndexMut};
 use std::fmt::Debug;
+use std::ops::{Index, IndexMut};
 
 pub use node::{Node, NodeId};
 
@@ -116,4 +116,3 @@ where
         Ok(())
     }
 }
-

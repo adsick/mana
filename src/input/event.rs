@@ -34,6 +34,6 @@ impl<T> Event<KeyboardInput, T> {
     }
 
     pub fn none(time: T) -> Self {
-            Self::new(KeyboardInput::default(), time)
+        Self::new(KeyboardInput::default(), time)
     }
 }
