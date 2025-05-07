@@ -1,0 +1,13 @@
+[package]
+name = "bevy_mana"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bevy = {version = "0.16.0", default-features = false, features = ["std", "bevy_asset", "bevy_log", "bevy_window", "bevy_winit"]}
+
+[features]
+default = ["x11"]
+wayland = ["bevy/wayland"]
+x11 = ["bevy/x11"]
+

@@ -1,7 +1,8 @@
 use std::collections::VecDeque;
 
+use graph::{Graph, GraphBuilder, NodeId};
+
 use crate::{
-    graph::{Graph, GraphBuilder, NodeId},
     input::Event,
     input::KeyboardInput,
     pattern::playground::first::atom::AtomResult,
